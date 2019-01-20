@@ -9,7 +9,7 @@ import config
 DATABASE = SqliteDatabase('todo.db')
 
 class Todo(Model):
-    title = CharField(max_length=200)
+    name = CharField(max_length=200)
     pub_date = DateTimeField(default=datetime.datetime.now)
 
     class Meta:
