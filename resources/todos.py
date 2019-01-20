@@ -5,12 +5,19 @@ from flask_restful import Resource, Api, reqparse, fields, marshal, marshal_with
 import models
 
 todo_fields = {
+    'id': fields.Integer,
     'title': fields.String
 }
 
 class TodoList(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument(
+            'id',
+            required=True,
+            help='No ID provided.',
+            location=['form', 'json']
+        )
         self.reqparse.add_argument(
             'title',
             required=True,
