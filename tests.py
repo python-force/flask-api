@@ -1,6 +1,6 @@
 import unittest
 import json
-from peewee import *
+from peewee import SqliteDatabase
 from models import Todo
 from app import app
 
@@ -8,6 +8,7 @@ MODELS = [Todo]
 
 # use an in-memory SQLite for tests.
 TEST_DB = SqliteDatabase(':memory:')
+
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
@@ -30,43 +31,45 @@ class BaseTestCase(unittest.TestCase):
         decoded = json.loads(self.response.data.decode("utf-8"))
 
         self.assertEqual(self.response.status_code, 200)
-        self.assertEqual(decoded, [{"id": 1, "name": "Launch the Space Rocket"}])
+        self.assertEqual(decoded,
+                         [{"id": 1, "name": "Launch the Space Rocket"}])
 
     def test_todo_listview_post(self):
         sending_data = {'name': 'Rocket Launched'}
-        self.response = self.client.post('http://0.0.0.0:8000/api/v1/todos', data=sending_data)
+        self.response = self.client.post('http://0.0.0.0:8000/api/v1/todos',
+                                         data=sending_data)
         decoded = json.loads(self.response.data.decode("utf-8"))
 
         self.assertEqual(self.response.status_code, 201)
-        self.assertEqual(decoded, {"id": 2, "name": "Rocket Launched"})
-
+        self.assertEqual(decoded,
+                         {"id": 2, "name": "Rocket Launched"})
 
     def test_todo_detailview_get(self):
         self.response = self.client.get('http://0.0.0.0:8000/api/v1/todos/1')
         decoded = json.loads(self.response.data.decode("utf-8"))
 
         self.assertEqual(self.response.status_code, 200)
-        self.assertEqual(decoded, {"id": 1, "name": "Launch the Space Rocket"})
-
+        self.assertEqual(decoded,
+                         {"id": 1, "name": "Launch the Space Rocket"})
 
     def test_todo_detailview_post(self):
         sending_data = {'name': 'Rocket Launched Edited'}
-        self.response = self.client.put('http://0.0.0.0:8000/api/v1/todos/1', data=sending_data)
+        self.response = self.client.put('http://0.0.0.0:8000/api/v1/todos/1',
+                                        data=sending_data)
         decoded = json.loads(self.response.data.decode("utf-8"))
 
         self.assertEqual(self.response.status_code, 201)
-        self.assertEqual(decoded, {"id": 1, "name": "Rocket Launched Edited"})
-
+        self.assertEqual(decoded,
+                         {"id": 1, "name": "Rocket Launched Edited"})
 
     def test_todo_deleteview(self):
         self.response = self.client.delete('http://0.0.0.0:8000/api/v1/todos/1')
-        decoded=''
+        decoded = ''
         if self.response.data:
             decoded = json.loads(self.response.data.decode("utf-8"))
 
         self.assertEqual(self.response.status_code, 204)
         self.assertEqual(decoded, '')
-
 
     def tearDown(self):
         # Not strictly necessary since SQLite in-memory databases only live
